@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Get DirectLink</title>
+</head>
+<body>
+    <form th:action="@{/get}" th:method="POST">
+        <div style="display: block">
+        <div style="display: flex">
+            <input name="username" placeholder="username">
+            <input name="password" placeholder="password">
+        </div>
+
+        <textarea name="links" type="text" style="width: 600px;height: 400px"></textarea>
+        <button type="submit" name="Submit" value="Submit">Submit</button>
+        </div>
+    </form>
+    <div th:if="${results!=null}">
+        <th:block th:each="result : ${results}">
+            <div th:text="${result.dlink}"></div>
+        </th:block>
+    </div>
+    <div>
+        ---------------------------------------------------------
+    </div>
+    <div th:if="${results!=null}">
+        <th:block th:each="result : ${results}">
+            <div th:text="${result.olink}"></div>
+        </th:block>
+    </div>
+</body>
+</html>
