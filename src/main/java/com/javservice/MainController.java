@@ -31,12 +31,6 @@ public class MainController {
                               @RequestParam(required = false) String password,
                               @RequestParam(required = true) String links, Model model) throws IOException {
     RapidgatorClient rapidgatorClient = new RapidgatorClient();
-    if(session.getAttribute("username")==null || session.getAttribute("password")==null) {
-      session.setAttribute("username",username);
-      session.setAttribute("password",password);
-    }
-    username = (String) session.getAttribute("username");
-    password = (String) session.getAttribute("password");
     SessionResponse sessionResponse = rapidgatorClient.getSessionId(username,password);
     String[] linkArray = links.split("\n");
     List<ResultDTO> results = new ArrayList<>();
@@ -46,5 +40,10 @@ public class MainController {
     }
     model.addAttribute("results",results);
     return "index";
+  }
+
+  @RequestMapping(value = "/command",method = RequestMethod.GET)
+  public String getCommand()  {
+    return "command";
   }
 }

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Build Linux Command</title>
+    <script
+            src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
+</head>
+<body>
+    <div>
+        <textarea id="rarfiles" style="width: 200px;height: 200px">
+        </textarea>
+        <button id="unrar" value="Generate unrar" onclick="generateUnrarCommand(this)">Generate unrar</button>
+    </div>
+    <div>
+        <textarea id="ffmpegfiles" style="width: 200px;height: 200px" ></textarea>
+        <button id="joinfile" value="Join Movie" onclick="generateJoinMovieCommand(this)">Join Movie</button>
+    </div>
+    <div id="result"></div>
+    <script>
+        function convertFileArrayToFileUniqueArray(fileArray, fileUniqueArray) {
+            for (i = 0; i < fileArray.length; i++) {
+                var fileName = fileArray[i].split(".part")[0];
+                var isExist = false;
+                if(fileUniqueArray.length>0) {
+                    for (j = 0; j < fileUniqueArray.length; j++) {
+                        if (fileUniqueArray[j].name === fileName) {
+                            isExist = true;
+                            fileUniqueArray[j].value = fileUniqueArray[j].value + 1;
+                        }
+                    }
+                }
+                if (!isExist) {
+                    var file = {name: fileName, value: 0};
+                    fileUniqueArray.push(file);
+                }
+            }
+        }
+        var generateUnrarCommand = function (e) {
+            var fileArray = $('#rarfiles').val().split('\n');
+            var fileUniqueArray = [];
+            var command = "";
+            convertFileArrayToFileUniqueArray(fileArray, fileUniqueArray);
+            for(i = 0 ;i < fileUniqueArray.length;i++) {
+                var file = fileUniqueArray[i];
+                command = command + "unrar e '" +file.name +".part1.rar' ";
+                for(j = 1 ; j <= file.value;j++) {
+                    command = command + "&& rm '"+file.name+".part"+j+".rar ";
+                }
+                command = command + ";"
+            }
+            $('#result').html(command);
+        }
+
+        var generateJoinMovieCommand = function (e) {
+            var fileArray = $('#ffmpegfiles').val().split('\n');
+            var command = "ls ";
+            for(i=0;i<fileArray.length;i++) {
+                command = command + " " + "'" +fileArray[i] +"'" + " ";
+            }
+            command = command + " | perl -ne 'print \"file $_\"' | ffmpeg -f concat -safe 0 -i - -c copy '"+fileArray[0]+"-JoinFile.mp4'";
+            $('#result').html(command);
+        }
+    </script>
+</body>
+</html>
